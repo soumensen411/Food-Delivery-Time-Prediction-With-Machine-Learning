@@ -177,35 +177,3 @@ Food-Delivery-Time-Prediction-With-Machine-Learning/
 ├── .gitignore                             # Git ignore file
 └── [Data files - if included]
 ```
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to:
-- Report issues
-- Suggest improvements
-- Submit pull requests
-- Share ideas for feature engineering
-
-## 📝 License
-
-This project is open source and available for educational and research purposes.
-
-## 👤 Author
-
-**Soumendra** - [GitHub Profile](https://github.com/soumensen411)
-
-## 🙏 Acknowledgments
-
-- Dataset source and inspiration
-- Open-source libraries and communities
-- Machine learning best practices and tutorials
-
-## 📞 Contact
-
-For questions or collaboration opportunities, feel free to reach out via GitHub.
-
----
-
-**Happy Predicting!** 🚀
-
-*Last Updated: 2026*
