@@ -1,179 +1,150 @@
 # Food Delivery Time Prediction with Machine Learning
 
-A machine learning project that predicts food delivery times using various features such as delivery person information, restaurant location, weather conditions, traffic density, and vehicle type.
+A comprehensive machine learning and web application project that predicts food delivery times using real-world order data. The project covers the complete data science workflow—from exploratory data analysis and preprocessing to model training, evaluation, and deployment in a small Flask app.
 
-## 🎯 Project Overview
+Live Demo: https://estimate-time-for-food-delivery.onrender.com/
 
-This project aims to build predictive models to estimate delivery times for food orders. By analyzing patterns in historical delivery data, we can help delivery platforms optimize logistics and provide customers with more accurate delivery time estimates.
+## Project Overview
 
-### Dataset
+This project analyzes 45,593 delivery orders to estimate the time required to complete a food delivery in minutes. It uses key factors such as:
 
-- **Total Records**: 45,593 delivery orders
-- **Features**: 20 columns including delivery person details, location coordinates, weather conditions, traffic density, vehicle type, and more
-- **Target Variable**: `Time_taken(min)` - Delivery time in minutes
+- delivery distance
+- traffic density
+- weather conditions
+- order type
+- vehicle type
+- city type
+- festival status
+- delivery person age and rating
+- number of deliveries in progress
 
-## 📊 Features
+The repository includes both the machine learning notebook and a deployed web interface that lets users estimate delivery times from input values.
 
-The dataset includes the following features:
+## Highlights
 
-| Feature | Description |
-|---------|-------------|
-| **ID** | Unique identifier for each delivery |
-| **Delivery_person_ID** | ID of the delivery person |
-| **Delivery_person_Age** | Age of the delivery person |
-| **Delivery_person_Ratings** | Customer rating of the delivery person |
-| **Restaurant_latitude** | Latitude coordinate of the restaurant |
-| **Restaurant_longitude** | Longitude coordinate of the restaurant |
-| **Delivery_location_latitude** | Latitude of delivery destination |
-| **Delivery_location_longitude** | Longitude of delivery destination |
-| **Order_Date** | Date when the order was placed |
-| **Time_Orderd** | Time when order was placed |
-| **Time_Order_picked** | Time when order was picked up |
-| **Weatherconditions** | Weather at time of delivery (Sunny, Cloudy, Stormy, Fog, Sandstorms, Windy) |
-| **Road_traffic_density** | Traffic density (Low, Medium, High, Jam) |
-| **Vehicle_condition** | Condition of the vehicle (0-3 scale) |
-| **Type_of_order** | Type of order (Snack, Meal, Drinks, Buffet) |
-| **Type_of_vehicle** | Vehicle type (motorcycle, scooter, bicycle, electric_scooter) |
-| **multiple_deliveries** | Number of deliveries person is making |
-| **Festival** | Whether delivery is during a festival (Yes/No) |
-| **City** | City type (Urban, Metropolitan) |
-| **Time_taken(min)** | **TARGET** - Delivery time in minutes |
+- End-to-end ML pipeline from CSV to prediction
+- Feature engineering and cleaning pipeline
+- Model training and evaluation with regression algorithms
+- Flask-based frontend for prediction
+- REST API endpoint for integration
+- Deployed live demo on Render
 
-## 🔍 Data Quality
+## Tech Stack
 
-- **Missing Values**: No missing values in the dataset
-- **Duplicates**: No duplicate records
-- **Data Consistency Issues**: 
-  - 616 rows with weather conditions marked as "conditions NaN"
-  - Some rows have missing delivery person age/ratings
-  - Cleaned and handled during preprocessing
+- Python
+- Jupyter Notebook
+- Pandas
+- NumPy
+- Scikit-learn
+- XGBoost
+- Flask
+- Joblib
 
-## 🛠️ Tech Stack
+## Dataset
 
-- **Python 3.x**
-- **Pandas** - Data manipulation and analysis
-- **NumPy** - Numerical computing
-- **Matplotlib** - Data visualization
-- **Seaborn** - Statistical data visualization
-- **Scikit-learn** - Machine learning algorithms
-- **Google Colab** - Development environment (with GPU support)
+- Total records: 45,593
+- Target variable: Time_taken(min)
+- Features include restaurant and destination coordinates, order timing, traffic, weather, city, vehicle, festival, and rider metadata.
 
-## 📋 Project Workflow
+## Model Workflow
 
-1. **Data Loading & Exploration**
-   - Load dataset from CSV
-   - Explore data structure and statistics
-   - Check for missing values and duplicates
+1. Load and clean the dataset
+2. Handle missing and inconsistent values
+3. Engineer distance and time-based features
+4. Encode categorical variables
+5. Train regression models
+6. Evaluate using RMSE and R²
+7. Save the trained model
+8. Serve predictions through a Flask app
 
-2. **Data Preprocessing**
-   - Clean data (handle missing values, fix data types)
-   - Feature extraction (extract temporal features)
-   - Feature engineering (calculate distance, handle categorical variables)
-   - Remove outliers if necessary
-
-3. **Exploratory Data Analysis (EDA)**
-   - Statistical analysis of features
-   - Correlation analysis
-   - Distribution analysis
-   - Weather and traffic impact analysis
-
-4. **Feature Engineering**
-   - Create new features (e.g., distance between restaurant and delivery location)
-   - Encode categorical variables
-   - Scale numerical features
-
-5. **Model Development**
-   - Train multiple regression models
-   - Hyperparameter tuning
-   - Model evaluation and comparison
-
-6. **Model Evaluation**
-   - Mean Absolute Error (MAE)
-   - Mean Squared Error (MSE)
-   - Root Mean Squared Error (RMSE)
-   - R² Score
-
-## 🚀 Getting Started
-
-### Prerequisites
+## Repository Structure
 
 ```bash
-pip install pandas numpy matplotlib seaborn scikit-learn
+Food-Delivery-Time-Prediction-With-Machine-Learning/
+├── README.md
+├── Food_delivery_time_prediction.ipynb
+├── Food delivery.csv
+├── train.py
+├── app.py
+├── requirements.txt
+├── model/
+│   └── model.joblib
+├── templates/
+│   └── index.html
+└── .gitignore
 ```
 
-### Running the Project
+## Live Demo
 
-1. Clone the repository:
+Open the deployed app here:
+
+https://estimate-time-for-food-delivery.onrender.com/
+
+## Local Setup
+
+### 1) Clone the repository
+
 ```bash
 git clone https://github.com/soumensen411/Food-Delivery-Time-Prediction-With-Machine-Learning.git
 cd Food-Delivery-Time-Prediction-With-Machine-Learning
 ```
 
-2. Open the Jupyter notebook:
+### 2) Install dependencies
+
 ```bash
-jupyter notebook Food_delivery_time_prediction.ipynb
+pip install -r requirements.txt
 ```
 
-3. Run all cells to execute the complete analysis and model training pipeline.
+### 3) Train the model
 
-**Note**: This project was developed in Google Colab. To run it locally, ensure all required libraries are installed.
-
-## 📈 Key Insights
-
-- Delivery time varies significantly based on weather conditions
-- Traffic density is a major factor affecting delivery duration
-- Vehicle type impacts delivery efficiency
-- Delivery person ratings may correlate with delivery speed
-- Distance between restaurant and delivery location is a strong predictor
-
-## 🎓 Model Algorithms
-
-The project explores and compares various regression algorithms:
-
-- Linear Regression
-- Ridge Regression
-- Lasso Regression
-- Decision Tree Regressor
-- Random Forest Regressor
-- Gradient Boosting Regressor
-- (Additional algorithms as implemented in the notebook)
-
-## 📊 Performance Metrics
-
-Models are evaluated using:
-- **MAE** (Mean Absolute Error) - Average absolute difference
-- **MSE** (Mean Squared Error) - Penalizes larger errors
-- **RMSE** (Root Mean Squared Error) - Interpretable in same units as target
-- **R² Score** - Model variance explanation
-
-## 🔧 Data Preprocessing Steps
-
-### Handling Missing Values
-```python
-# Remove rows with null weather conditions or delivery person info
-# Impute or remove rows with missing critical features
+```bash
+python train.py "Food delivery.csv"
 ```
 
-### Feature Engineering
-```python
-# Calculate distance using latitude/longitude
-# Extract day, month, year from dates
-# Extract hour from time features
-# Encode categorical variables (weather, traffic, vehicle type)
+### 4) Run the app
+
+```bash
+python app.py
 ```
 
-### Data Normalization
-```python
-# Scale numerical features for better model performance
-# Apply appropriate encoding for categorical variables
+Then open:
+
+```bash
+http://127.0.0.1:5000/
 ```
 
-## 📁 Project Structure
+## API Usage
 
+The Flask app exposes a prediction endpoint:
+
+```bash
+POST /api/predict
 ```
-Food-Delivery-Time-Prediction-With-Machine-Learning/
-├── README.md                              # Project documentation
-├── Food_delivery_time_prediction.ipynb    # Main Jupyter notebook
-├── .gitignore                             # Git ignore file
-└── [Data files - if included]
+
+Example JSON body:
+
+```json
+{
+  "distance": 8.5,
+  "hour": 18,
+  "traffic": "High",
+  "weather": "Sunny",
+  "order_type": "Meal",
+  "city": "Metropolitian",
+  "vehicle": "motorcycle",
+  "vehicle_condition": 2,
+  "age": 28,
+  "rating": 4.6,
+  "multiple_deliveries": 1,
+  "festival": "No"
+}
 ```
+
+## Notes
+
+- If no trained model file is present, the app runs in demo mode with rule-based fallback estimates.
+- The project is designed for practical ML learning and deployment demos, making it useful for portfolios, coursework, and prediction-based web applications.
+
+## License
+
+This project is for educational and demonstration purposes.
