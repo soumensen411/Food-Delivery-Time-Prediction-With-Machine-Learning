@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delivery time predictor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f5f4;--surface:#fff;--sunk:#f5f5f4;--ink:#1c1c1b;--ink2:#5c5c58;--ink3:#8a8a85;
+  --line:rgba(28,28,27,.1);--accent:#c2410c;--on-accent:#fff;--focus:rgba(194,65,12,.35);
+  --sans:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1)
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#141414;--surface:#1c1c1c;--sunk:#141414;--ink:#f1f1ef;--ink2:#a3a39e;--ink3:#74746f;
+  --line:rgba(241,241,239,.1);--accent:#ff8a5c;--on-accent:#1a0f0a;--focus:rgba(255,138,92,.4)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+main{max-width:960px;margin:0 auto;padding:48px 24px 64px}
+header{margin-bottom:32px}
+h1{font-size:28px;line-height:36px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--ink2);margin:0}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 328px;gap:24px;align-items:start}
+@media(max-width:780px){.grid{grid-template-columns:1fr}main{padding:32px 16px 48px}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px}
+.group+.group{margin-top:24px}
+.group h2{font-size:13px;line-height:16px;font-weight:500;color:var(--ink3);margin:0 0 12px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:480px){.fields{grid-template-columns:1fr}}
+label{display:block;font-size:13px;line-height:16px;color:var(--ink2);margin-bottom:8px}
+select,input{width:100%;height:40px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--sunk);color:var(--ink);font:400 15px var(--sans);transition:border-color .15s var(--ease),box-shadow .15s var(--ease)}
+input{font-variant-numeric:tabular-nums}
+select:hover,input:hover{border-color:var(--ink3)}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px var(--focus)}
+button{width:100%;height:44px;margin-top:24px;border:0;border-radius:10px;background:var(--accent);color:var(--on-accent);font:500 15px var(--sans);cursor:pointer;transition:opacity .15s var(--ease),transform .1s var(--ease)}
+button:hover{opacity:.92}button:active{transform:scale(.99)}
+button:disabled{opacity:.5;cursor:progress}
+.err{color:#b4372b;margin:12px 0 0;font-size:13px}
+@media (prefers-color-scheme:dark){.err{color:#f08a7e}}
+.notice{border:1px solid var(--line);border-left:2px solid var(--accent);background:var(--surface);border-radius:8px;padding:12px 16px;margin-bottom:24px;font-size:13px;color:var(--ink2)}
+.notice b{color:var(--ink);font-weight:500}
+code{font:400 12px var(--mono);background:var(--sunk);padding:2px 6px;border-radius:4px}
+
+/* Ticket: the one rich moment */
+.ticket{position:sticky;top:24px;padding:0;overflow:hidden}
+.ticket .top{padding:24px 24px 20px}
+.tag{font:400 12px/16px var(--mono);color:var(--ink3)}
+.route{display:flex;align-items:center;gap:8px;margin:16px 0 20px}
+.route .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.route .from{background:var(--ink3)}
+.route .to{background:var(--accent)}
+.route .line{flex:1;height:0;border-top:1.5px dashed var(--ink3);opacity:.6}
+.route .km{font:500 12px var(--mono);color:var(--ink2);font-variant-numeric:tabular-nums}
+.eta{display:flex;align-items:baseline;gap:8px}
+.eta .n{font-size:64px;line-height:64px;font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--ink)}
+.eta .n.set{color:var(--accent)}
+.eta .u{color:var(--ink2);font-size:15px}
+.range{margin:12px 0 0;font-size:13px;color:var(--ink2);min-height:20px;font-variant-numeric:tabular-nums}
+.tear{position:relative;height:0;border-top:1.5px dashed var(--line)}
+.tear::before,.tear::after{content:"";position:absolute;top:-9px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:1px solid var(--line)}
+.tear::before{left:-8px}.tear::after{right:-8px}
+.ticket dl{margin:0;padding:20px 24px 24px;display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font:400 12px/16px var(--mono)}
+.ticket dt{color:var(--ink3)}.ticket dd{margin:0;text-align:right;color:var(--ink2)}
+.foot{padding:0 24px 20px;font-size:12px;line-height:16px;color:var(--ink3)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Delivery time predictor</h1>
+    <p class="sub">Estimate minutes from restaurant to door from the order, courier and conditions</p>
+  </header>
+
+  {% if not live %}
+  <div class="notice"><b>Demo mode</b> · No trained model found, so estimates use a rule of thumb. Run <code>python train.py Food_delivery.csv</code> and restart to use the real model.</div>
+  {% endif %}
+
+  <div class="grid">
+    <form id="f" class="card" novalidate>
+      <div class="group">
+        <h2>Order</h2>
+        <div class="fields">
+          <div><label for="distance">Distance (km)</label><input id="distance" type="number" inputmode="decimal" step="0.1" min="0.1" max="100" value="8" required></div>
+          <div><label for="hour">Order hour (0–23)</label><input id="hour" type="number" inputmode="numeric" min="0" max="23" value="19" required></div>
+          <div><label for="order_type">Order type</label>
+            <select id="order_type">{% for o in options.Type_of_order %}<option>{{o}}</option>{% endfor %}</select></div>
+          <div><label for="city">City type</label>
+            <select id="city">{% for o in options.City %}<option>{{o}}</option>{% endfor %}</select></div>
+          <div><label for="festival">Festival day</label>
+            <select id="festival">{% for o in options.Festival %}<option>{{o}}</option>{% endfor %}</select></div>
+        </div>
+      </div>
+      <div class="group">
+        <h2>Conditions</h2>
+        <div class="fields">
+          <div><label for="traffic">Traffic</label>
+            <select id="traffic">{% for o in options.Road_traffic_density %}<option {{ 'selected' if o=='Medium' }}>{{o}}</option>{% endfor %}</select></div>
+          <div><label for="weather">Weather</label>
+            <select id="weather">{% for o in options.Weatherconditions %}<option>{{o}}</option>{% endfor %}</select></div>
+        </div>
+      </div>
+      <div class="group">
+        <h2>Courier</h2>
+        <div class="fields">
+          <div><label for="vehicle">Vehicle</label>
+            <select id="vehicle">{% for o in options.Type_of_vehicle %}<option value="{{o}}">{{o.replace('_',' ').capitalize()}}</option>{% endfor %}</select></div>
+          <div><label for="vehicle_condition">Vehicle condition (0–3)</label><input id="vehicle_condition" type="number" inputmode="numeric" min="0" max="3" value="1" required></div>
+          <div><label for="age">Age</label><input id="age" type="number" inputmode="numeric" min="15" max="70" value="30" required></div>
+          <div><label for="rating">Rating (1–5)</label><input id="rating" type="number" inputmode="decimal" step="0.1" min="1" max="5" value="4.7" required></div>
+          <div><label for="multiple_deliveries">Parallel deliveries (0–3)</label><input id="multiple_deliveries" type="number" inputmode="numeric" min="0" max="3" value="1" required></div>
+        </div>
+      </div>
+      <button id="go" type="submit">Predict delivery time</button>
+      <p id="err" class="err" role="alert" hidden></p>
+    </form>
+
+    <aside class="card ticket" aria-live="polite">
+      <div class="top">
+        <span class="tag">{{ meta.name if live else 'Demo estimate' }}</span>
+        <div class="route" aria-hidden="true"><span class="dot from"></span><span class="line"></span><span class="km" id="kmTag">8.0 km</span><span class="line"></span><span class="dot to"></span></div>
+        <div class="eta"><span class="n" id="min">–</span><span class="u">min</span></div>
+        <p class="range" id="range"></p>
+      </div>
+      <div class="tear"></div>
+      <dl>
+        <dt>Order</dt><dd id="s_order"></dd>
+        <dt>Traffic</dt><dd id="s_traffic"></dd>
+        <dt>Weather</dt><dd id="s_weather"></dd>
+        <dt>Courier</dt><dd id="s_courier"></dd>
+      </dl>
+      <div class="foot">
+        {% if live %}Range is ±1 RMSE ({{ '%.1f'|format(meta.rmse) }} min) on held-out data, R² {{ '%.2f'|format(meta.r2) }}
+        {% else %}Rule of thumb, not a machine-learning prediction{% endif %}
+      </div>
+    </aside>
+  </div>
+</main>
+<script>
+const ids=["distance","hour","traffic","weather","order_type","city","vehicle","vehicle_condition","age","rating","multiple_deliveries","festival"];
+const $=id=>document.getElementById(id);
+function summary(){
+  const km=parseFloat($("distance").value);
+  $("kmTag").textContent=(isNaN(km)?"–":km.toFixed(1))+" km";
+  $("s_order").textContent=$("order_type").value+" · "+String($("hour").value).padStart(2,"0")+":00";
+  $("s_traffic").textContent=$("traffic").value;
+  $("s_weather").textContent=$("weather").value;
+  $("s_courier").textContent=$("vehicle").selectedOptions[0].text+" · "+$("rating").value+"★";
+}
+ids.forEach(i=>$(i).addEventListener("input",summary));summary();
+$("f").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const body={};ids.forEach(i=>body[i]=$(i).value);
+  $("go").disabled=true;$("err").hidden=true;
+  try{
+    const r=await fetch("/api/predict",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||"Request failed");
+    $("min").textContent=Math.round(d.minutes);$("min").classList.add("set");
+    $("range").textContent="Likely "+d.low+"–"+d.high+" min";
+  }catch(x){$("err").textContent=x.message;$("err").hidden=false}
+  $("go").disabled=false;
+});
+</script>
+</body>
+</html>
